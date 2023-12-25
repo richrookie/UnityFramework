@@ -11,11 +11,11 @@ public class Define
     public enum eGameState : byte
     {
         Ready,
+        Wait,
         Start,
         Play,
         Clear,
         GameOver,
-        Wait,
         End
     }
 }

@@ -13,11 +13,12 @@ public class Util : MonoBehaviour
 
     public static GameObject FindChild(GameObject go, string name = null, bool recursive = false)
     {
-        Transform transform = FindChild<Transform>(go, name, recursive);
-        if (transform == null)
+        Transform tf = FindChild<Transform>(go, name, recursive);
+
+        if (tf == null)
             return null;
 
-        return transform.gameObject;
+        return tf.gameObject;
     }
 
     public static T FindChild<T>(GameObject go, string name = null, bool recursive = false) where T : UnityEngine.Object
@@ -29,10 +30,11 @@ public class Util : MonoBehaviour
         {
             for (int i = 0; i < go.transform.childCount; i++)
             {
-                Transform transform = go.transform.GetChild(i);
-                if (string.IsNullOrEmpty(name) || transform.name == name)
+                Transform tf = go.transform.GetChild(i);
+
+                if (string.IsNullOrEmpty(name) || tf.name == name)
                 {
-                    T component = transform.GetComponent<T>();
+                    T component = tf.GetComponent<T>();
                     if (component != null)
                         return component;
                 }

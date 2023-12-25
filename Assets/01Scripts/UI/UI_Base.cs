@@ -18,9 +18,9 @@ public abstract class UI_Base : MonoBehaviour
         for (int i = 0; i < names.Length; i++)
         {
             if (typeof(T) == typeof(GameObject))
-                objects[i] = Util.FindChild(gameObject, names[i], true);
+                objects[i] = Util.FindChild(this.gameObject, names[i], true);
             else
-                objects[i] = Util.FindChild<T>(gameObject, names[i], true);
+                objects[i] = Util.FindChild<T>(this.gameObject, names[i], true);
 
             if (objects[i] == null)
                 Debug.Log($"Failed to bind{names[i]}");
@@ -30,6 +30,7 @@ public abstract class UI_Base : MonoBehaviour
     protected T Get<T>(int idx) where T : UnityEngine.Object
     {
         UnityEngine.Object[] objects = null;
+
         if (_objects.TryGetValue(typeof(T), out objects) == false)
             return null;
 
