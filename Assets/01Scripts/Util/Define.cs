@@ -18,4 +18,10 @@ public class Define
         GameOver,
         End
     }
+
+    public enum eInputMode : byte
+    {
+        Default,
+        Flying,
+    }
 }
