@@ -8,11 +8,15 @@ public class Managers : MonoBehaviour
 
 
     private GameManager _game = null;
+
     public static GameManager Game { get { return Instance._game; } }
-    private InputManager _input = new InputManager();
     public static InputManager InputMgr { get { return Instance._input; } }
-    private ResourceManager _resource = new ResourceManager();
     public static ResourceManager Resource { get { return Instance._resource; } }
+    public static UIManager UI { get { return Instance._ui; } }
+
+    private InputManager _input = new InputManager();
+    private ResourceManager _resource = new ResourceManager();
+    private UIManager _ui = new UIManager();
 
 
     private void Start()

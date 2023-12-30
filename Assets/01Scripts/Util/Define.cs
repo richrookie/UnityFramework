@@ -24,4 +24,21 @@ public class Define
         Default,
         Flying,
     }
+
+    public enum UIEvent : byte
+    {
+        Click,
+        Drag
+    }
+
+    public enum MouseEvent : byte
+    {
+        Press,
+        Click
+    }
+
+    public enum CameraMode
+    {
+
+    }
 }
