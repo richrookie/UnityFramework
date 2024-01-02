@@ -13,4 +13,9 @@ public class InputManager : MonoBehaviour
         if (KeyAction != null)
             KeyAction.Invoke();
     }
+
+    public void Clear()
+    {
+        KeyAction = null;
+    }
 }

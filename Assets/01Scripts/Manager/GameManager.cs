@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    void Start()
+    public void Init()
     {
-        // Managers.Resource.Instantiate("TestCube");
+        Managers.Sound.Play(Managers.Resource.Load<AudioClip>("Bgm"), Define.eSound.Bgm);
     }
 }

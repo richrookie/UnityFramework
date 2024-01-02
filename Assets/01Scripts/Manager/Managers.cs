@@ -1,22 +1,28 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Managers : MonoBehaviour
 {
-    private static Managers instance = null;
-    public static Managers Instance { get { Init(); return instance; } }
+    private static Managers _instance = null;
+    public static Managers Instance { get { Init(); return _instance; } }
 
 
-    private GameManager _game = null;
+    [HideInInspector]
+    public GameManager _game = null;
+
+    private InputManager _input = new InputManager();
+    private ResourceManager _resource = new ResourceManager();
+    private UIManager _ui = new UIManager();
+    private SceneManagerEx _scene = new SceneManagerEx();
+    private SoundManager _sound = new SoundManager();
 
     public static GameManager Game { get { return Instance._game; } }
     public static InputManager InputMgr { get { return Instance._input; } }
     public static ResourceManager Resource { get { return Instance._resource; } }
     public static UIManager UI { get { return Instance._ui; } }
+    public static SceneManagerEx Scene { get { return Instance._scene; } }
+    public static SoundManager Sound { get { return Instance._sound; } }
 
-    private InputManager _input = new InputManager();
-    private ResourceManager _resource = new ResourceManager();
-    private UIManager _ui = new UIManager();
+
 
 
     private void Start()
@@ -32,7 +38,7 @@ public class Managers : MonoBehaviour
 
     private static void Init()
     {
-        if (instance == null)
+        if (_instance == null)
         {
             // === Default Setting === //
             Application.targetFrameRate = 60;
@@ -42,11 +48,32 @@ public class Managers : MonoBehaviour
 
             GameObject managers = new GameObject { name = "@Managers" };
             managers.AddComponent<Managers>();
-            instance = managers.GetComponent<Managers>();
+            DontDestroyOnLoad(managers);
+            _instance = managers.GetComponent<Managers>();
 
-            instance._game = managers.GetOrAddComponent<GameManager>();
+            GameObject SceneTransition = Managers.Resource.Instantiate("SceneTransition");
+            SceneTransition.transform.SetParent(_instance.transform);
+            Scene._sceneTransitionAnimCtrl = SceneTransition.GetComponent<Animator>();
+
+            _instance._sound.Init();
+            _instance._scene.Init();
+
+            _instance._game = managers.GetOrAddComponent<GameManager>();
 
             DontDestroyOnLoad(managers);
         }
+    }
+
+    public static void GameInit()
+    {
+        _instance._game.Init();
+    }
+
+    public static void Clear()
+    {
+        InputMgr.Clear();
+        Sound.Clear();
+        Scene.Clear();
+        UI.Clear();
     }
 }

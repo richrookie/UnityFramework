@@ -41,4 +41,11 @@ public class Define
     {
 
     }
+
+    public enum eSound
+    {
+        Bgm,
+        Effect,
+        MaxCount
+    }
 }

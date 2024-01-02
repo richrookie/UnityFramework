@@ -1,18 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GameScene : MonoBehaviour
+public class GameScene : BaseScene
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void Init()
     {
-        
+        base.Init();
+
+        SceneType = Define.eScene.Game;
+        Managers.UI.ShowSceneUI<UI_GameScene>();
+        Managers.GameInit();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Clear()
     {
-        
     }
 }
