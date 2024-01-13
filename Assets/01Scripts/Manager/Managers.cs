@@ -15,6 +15,7 @@ public class Managers : MonoBehaviour
     private SceneManagerEx _scene = new SceneManagerEx();
     private SoundManager _sound = new SoundManager();
     private PoolManager _pool = new PoolManager();
+    private DataManager _data = new DataManager();
 
     public static GameManager Game { get { return Instance._game; } }
     public static InputManager InputMgr { get { return Instance._input; } }
@@ -23,6 +24,7 @@ public class Managers : MonoBehaviour
     public static SceneManagerEx Scene { get { return Instance._scene; } }
     public static SoundManager Sound { get { return Instance._sound; } }
     public static PoolManager Pool { get { return Instance._pool; } }
+    public static DataManager Data { get { return Instance._data; } }
 
 
 
@@ -59,6 +61,7 @@ public class Managers : MonoBehaviour
             _instance._sound.Init();
             _instance._scene.Init();
             _instance._pool.Init();
+            _instance._data.Init();
 
             _instance._game = managers.GetOrAddComponent<GameManager>();
 

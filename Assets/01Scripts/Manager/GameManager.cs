@@ -8,4 +8,16 @@ public class GameManager : MonoBehaviour
     {
         Managers.Sound.Play(Managers.Resource.Load<AudioClip>("Bgm"), Define.eSound.Bgm);
     }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Managers.Data.UseSound = !Managers.Data.UseSound;
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            Managers.Sound.Play("Click");
+        }
+    }
 }

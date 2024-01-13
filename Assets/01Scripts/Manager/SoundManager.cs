@@ -31,7 +31,7 @@ public class SoundManager
 
     public void Play(AudioClip audioClip, Define.eSound type = Define.eSound.Effect, float pitch = 1.0f)
     {
-        if (audioClip == null)
+        if (audioClip == null || !Managers.Data.UseSound)
             return;
 
         if (type == Define.eSound.Bgm)
@@ -55,6 +55,8 @@ public class SoundManager
     public void Play(string path, Define.eSound type = Define.eSound.Effect, float pitch = 1.0f)
     {
         AudioClip audioClip = GetOrAddAudioClip(path, type);
+
+        Play(audioClip, type, pitch);
     }
 
     private AudioClip GetOrAddAudioClip(string path, Define.eSound type = Define.eSound.Effect)
@@ -78,6 +80,11 @@ public class SoundManager
             Debug.Log($"AudioClip Missing ! {path}");
 
         return audioClip;
+    }
+
+    public void BgmState(bool value)
+    {
+        _audioSources[(int)Define.eSound.Bgm].volume = value ? 1 : 0;
     }
 
     public void Clear()
