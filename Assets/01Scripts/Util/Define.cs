@@ -1,5 +1,8 @@
 public class Define
 {
+    public static float BOUND = 0.5f;
+
+
     public enum eScene : byte
     {
         UnKnown,

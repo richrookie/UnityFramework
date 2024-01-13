@@ -61,25 +61,37 @@ public class InputController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            rotVec = Vector3.forward;
+            rotVec += Vector3.forward;
             this.transform.position += Vector3.forward * _moveSpeed * Time.deltaTime;
         }
-        else if (Input.GetKey(KeyCode.S))
+        else
+            rotVec -= Vector3.forward;
+
+        if (Input.GetKey(KeyCode.S))
         {
-            rotVec = Vector3.back;
+            rotVec += Vector3.back;
             this.transform.position += Vector3.back * _moveSpeed * Time.deltaTime;
         }
-        else if (Input.GetKey(KeyCode.D))
+        else
+            rotVec -= Vector3.back;
+
+        if (Input.GetKey(KeyCode.D))
         {
-            rotVec = Vector3.right;
+            rotVec += Vector3.right;
             this.transform.position += Vector3.right * _moveSpeed * Time.deltaTime;
         }
-        else if (Input.GetKey(KeyCode.A))
+        else
+            rotVec -= Vector3.right;
+
+        if (Input.GetKey(KeyCode.A))
         {
-            rotVec = Vector3.left;
+            rotVec += Vector3.left;
             this.transform.position += Vector3.left * _moveSpeed * Time.deltaTime;
         }
+        else
+            rotVec -= Vector3.left;
 
+        print(rotVec);
         _rb.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(rotVec), .2f);
     }
 
