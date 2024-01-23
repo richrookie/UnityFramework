@@ -31,8 +31,7 @@ public class DataManager
     }
     #endregion
 
-    private bool _endTutorial = false;
-    public bool EndTutorial
+    public bool Tutorial
     {
         get => System.Convert.ToBoolean(PlayerPrefs.GetInt("EndTutorial"));
         set => PlayerPrefs.SetInt("EndTutorial", value ? 1 : 0);

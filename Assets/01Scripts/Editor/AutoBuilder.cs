@@ -3,88 +3,74 @@ using UnityEditor;
 using UnityEditor.iOS.Xcode;
 using System.Diagnostics;
 using System.IO;
+using UnityEditor.Build.Reporting;
+
 public class AutoBuilder
 {
     static string[] SCENES = FindEnabledEditorScenes();
-
     static string APP_NAME = "YourAppName";
-    static string TARGET_DIR = "Builds";
+    static string TARGET_DIR = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Builds/Android/";
 
-    private void Start()
-    {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-        // Windows-specific code
-        TARGET_DIR = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-        // Mac-specific code
-        TARGET_DIR = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-#else
-        // Default code for other platforms (you can modify this based on your needs)
-        TARGET_DIR = Application.persistentDataPath;
-#endif
-    }
 
     #region AOS
-    [MenuItem("Build/Build and Run APK")]
-    static void BuildAndRunAPK()
-    {
-        if (IsAndroidPlatform())
-        {
-            BuildAPK();
-            RunOnAndroidDevice();
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("Build target is not supported for APK. Please choose an Android platform.");
-        }
-    }
-
     [MenuItem("Build/Build APK")]
     static void BuildAPK()
     {
+        APP_NAME = PlayerSettings.productName + ".apk";
+
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = SCENES;
-        buildPlayerOptions.locationPathName = TARGET_DIR + "/" + APP_NAME + ".apk";
+        buildPlayerOptions.locationPathName = TARGET_DIR + "/" + APP_NAME;
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
 
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
         PlayerSettings.SetApiCompatibilityLevel(BuildTargetGroup.Android, ApiCompatibilityLevel.NET_4_6);
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7;
         EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
         EditorUserBuildSettings.androidBuildType = AndroidBuildType.Release;
         PlayerSettings.SplashScreen.show = false;
 
-        BuildPipeline.BuildPlayer(buildPlayerOptions);
+        BuildAndroid(SCENES, TARGET_DIR + "/" + APP_NAME, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.CompressWithLz4HC);
+    }
+    static void BuildAndroid(string[] scenes, string app_target, BuildTargetGroup build_target_group, BuildTarget build_target, BuildOptions build_options)
+    {
+        PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+
+        EditorUserBuildSettings.buildAppBundle = false;
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = scenes;
+        buildPlayerOptions.locationPathName = app_target;
+        buildPlayerOptions.target = BuildTarget.Android;
+        buildPlayerOptions.options = build_options;
+        var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
     }
 
-    [MenuItem("Build/Build and Run AAB")]
-    static void BuildAndRunAAB()
+    [MenuItem("Build/Build and Run APK")]
+    static void BuildAndRunAPK()
     {
-        if (IsAndroidPlatform())
-        {
-            BuildAAB();
-            RunOnAndroidDevice();
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("Build target is not supported for APK. Please choose an Android platform.");
-        }
+        IsAndroidPlatform();
+        BuildAPK();
+        RunOnAndroidDevice();
     }
+
+
 
     [MenuItem("Build/Build aab")]
     static void BuildAAB()
     {
+        APP_NAME = PlayerSettings.productName + ".aab";
+
         // Set the keystore information
-        PlayerSettings.Android.keystoreName = "YourKeystoreName.keystore";
-        PlayerSettings.Android.keystorePass = "YourKeystorePassword";
-        PlayerSettings.Android.keyaliasName = "YourKeyAlias";
-        PlayerSettings.Android.keyaliasPass = "YourKeyAliasPassword";
+        // PlayerSettings.Android.keystoreName = "YourKeystoreName.keystore";
+        // PlayerSettings.Android.keystorePass = "YourKeystorePassword";
+        // PlayerSettings.Android.keyaliasName = "YourKeyAlias";
+        // PlayerSettings.Android.keyaliasPass = "YourKeyAliasPassword";
 
         // Set the build options
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = SCENES;
-        buildPlayerOptions.locationPathName = TARGET_DIR + "/" + APP_NAME + ".aab";
+        buildPlayerOptions.locationPathName = TARGET_DIR + "/" + APP_NAME;
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
 
@@ -96,22 +82,35 @@ public class AutoBuilder
         EditorUserBuildSettings.androidBuildType = AndroidBuildType.Release;
         PlayerSettings.SplashScreen.show = false;
 
-        BuildPipeline.BuildPlayer(buildPlayerOptions);
-
-        // Reset the keystore information to avoid conflicts in future builds
-        PlayerSettings.Android.keystoreName = "";
-        PlayerSettings.Android.keystorePass = "";
-        PlayerSettings.Android.keyaliasName = "";
-        PlayerSettings.Android.keyaliasPass = "";
+        BuildAndroidAAB(SCENES, TARGET_DIR + "/" + APP_NAME, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.CompressWithLz4HC /*| BuildOptions.*/);
     }
+    static void BuildAndroidAAB(string[] scenes, string app_target, BuildTargetGroup build_target_group, BuildTarget build_target, BuildOptions build_options)
+    {
+        PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+
+        EditorUserBuildSettings.buildAppBundle = true;
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = scenes;
+        buildPlayerOptions.locationPathName = app_target;
+        buildPlayerOptions.target = BuildTarget.Android;
+        buildPlayerOptions.options = build_options;
+        var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+    }
+
+    [MenuItem("Build/Build and Run AAB")]
+    static void BuildAndRunAAB()
+    {
+        IsAndroidPlatform();
+        BuildAAB();
+        RunOnAndroidDevice();
+    }
+
 
     static void RunOnAndroidDevice()
     {
-        // Add code here to run on Android device
         string androidSDKPath = EditorPrefs.GetString("AndroidSdkRoot");
         string packageName = $"com.{PlayerSettings.companyName}." + APP_NAME.ToLower();
 
-        // Example command to install and run the APK on a connected device
         string adbInstallCommand = $"\"{androidSDKPath}/platform-tools/adb\" install -r {TARGET_DIR}/{APP_NAME}.apk";
         string adbRunCommand = $"\"{androidSDKPath}/platform-tools/adb\" shell am start -n {packageName}/{packageName}.MainActivity";
 
@@ -120,38 +119,56 @@ public class AutoBuilder
         ExecuteCommand(adbRunCommand);
     }
 
-    static bool IsAndroidPlatform()
+    static void IsAndroidPlatform()
     {
-        return EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android;
+        bool isAndroid = EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android ? true : false;
+
+        if (!isAndroid)
+        {
+            UnityEngine.Debug.LogError("Build target is not supported for APK. Please choose an Android platform.");
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+        }
     }
     #endregion
 
 
     #region iOS
-    [MenuItem("Build/Build and Run iOS")]
-    static void BuildAndRuniOS()
-    {
-        if (IsiOSPlatform())
-        {
-            BuildiOS();
-            RunOniOSDevice();
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("Build target is not supported for iOS. Please choose an iOS platform.");
-        }
-    }
+    public static string APP_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    public static string IOS_FOLDER = string.Format("{0}/Builds/iOS/", APP_FOLDER);
 
     [MenuItem("Build/Build iOS")]
     static void BuildiOS()
     {
+        APP_NAME = PlayerSettings.productName + ".apk";
+
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = SCENES;
-        buildPlayerOptions.locationPathName = TARGET_DIR + "/" + APP_NAME;
         buildPlayerOptions.target = BuildTarget.iOS;
         buildPlayerOptions.options = BuildOptions.None;
 
-        BuildPipeline.BuildPlayer(buildPlayerOptions);
+        // PlayerSettings.iOS.appleDeveloperTeamID = "";
+        PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
+        PlayerSettings.SplashScreen.show = false;
+
+        BuildIOS(SCENES, IOS_FOLDER, BuildTarget.iOS, BuildOptions.None);
+    }
+
+    [MenuItem("Build/Build and Run iOS")]
+    static void BuildAndRuniOS()
+    {
+        IsiOSPlatform();
+        BuildiOS();
+        RunOniOSDevice();
+    }
+
+    static void BuildIOS(string[] scenes, string target_path, BuildTarget build_target, BuildOptions build_options)
+    {
+        PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+
+        EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, build_target);
+        BuildReport res = BuildPipeline.BuildPlayer(scenes, target_path, build_target, build_options);
+        if (res.name.Length > 0) { throw new Exception("BuildPlayer failure: " + res); }
     }
 
     static void RunOniOSDevice()
@@ -169,11 +186,16 @@ public class AutoBuilder
         ExecuteCommand(xcodeRunCommand);
     }
 
-    static bool IsiOSPlatform()
+    static void IsiOSPlatform()
     {
-        return EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS;
-    }
+        bool isiOS = EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS ? true : false;
 
+        if (!isiOS)
+        {
+            UnityEngine.Debug.LogError("Build target is not supported for iOS. Please choose an iOS platform.");
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
+        }
+    }
     #endregion
 
 
@@ -183,9 +205,7 @@ public class AutoBuilder
         var sceneNames = new string[editorScenes.Length];
 
         for (int i = 0; i < editorScenes.Length; i++)
-        {
             sceneNames[i] = editorScenes[i].path;
-        }
 
         return sceneNames;
     }

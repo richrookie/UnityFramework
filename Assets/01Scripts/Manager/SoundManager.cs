@@ -29,6 +29,12 @@ public class SoundManager
         }
     }
 
+    /// <summary>
+    /// Bgm, Effect Sound 등 소리를 담당하는 함수
+    /// </summary>
+    /// <param name="audioClip">오디오 클릭</param>
+    /// <param name="type">사운드 타입</param>
+    /// <param name="pitch">음량</param>
     public void Play(AudioClip audioClip, Define.eSound type = Define.eSound.Effect, float pitch = 1.0f)
     {
         if (audioClip == null || !Managers.Data.UseSound)
