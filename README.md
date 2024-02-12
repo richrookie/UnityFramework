@@ -53,4 +53,17 @@ Bind 오브젝트
   - SetPositionX(this Transform tr, float x) : Transform의 X만 바꾸기
   - SetAlpha(this Graphic graphic, float alpha) : Color의 Alpha 만 바꾸기
   - PlayAllParticle(this ParticleSystem particle) : 파티클 자식들까지 모두 실행
-  - StopAllParticle(this ParticleSystem particle) : 파티클 자식들까지 모두 정지 
+  - StopAllParticle(this ParticleSystem particle) : 파티클 자식들까지 모두 정지
+
+### 4. 폴더구성
+- 00Scenes : 씬 모음집
+- 01Scripts : 스크립 모음집
+- 02Prefabs : 프래팹 모음집
+- 03Materials : 머테리얼 모음집
+- 04Textures : 텍스쳐 모음집
+- 05Animations : 애니메이션 모음집
+- 06Sounds : Bgm, Effect 사운드 모음집
+- Plugins : 미리 포함된 에셋들 모음집
+
+02Prefabs, 03Materials, 04Textures 폴더 내부에 Resources 폴더가 존재한다면,
+Managers.Resource.Load<Sprite>("Name") 혹은 Managers.Resource.Instantiate("Name") 같이 로드할 수 있음.
