@@ -2,7 +2,7 @@
 - <b>프로젝트명</b> : Unity Framework<br>
 - <b>목 적</b> : 개발자들의 작업 효율을 위한 프레임워크 제공<br>
 - <b>구 조</b> :<br>
-  <b>1. Managers</b>
+### 1. Managers
   - Managers.cs : Manager들을 관리하는 Monobehaviour (모든 매니져는 해당 스크립트로 접근)
       ![image](https://github.com/richrookie/UnityFramework/assets/83854046/a5fd02df-0f48-482c-8ffe-defff1952775)
   - DataManager.cs : 인게임 Data 관리용도
@@ -22,4 +22,35 @@
 
   - UIManager.cs : UI 관리 용도의 매니저
 
+### 2. UI_Base
+Bind 오브젝트
+- GetObject
+- Getimage
+- GetButton
+- GetText
+- GetTextMesh
+  
+함수를 통해 하위 오브젝트 컴포너트에 접근. (관리의 복잡함을 해소해줌)
 
+### 3. Utils
+- Util.cs : 쓸모있는 함수들 미리 정의 (MonoBehaviour 상속)
+  - GetOrAddComponent<T>(GameObject go)
+  - WaitForSeconds WaitGet(float waitSec) : 코루틴 사용 시 WaitForSeconds를 Dictionary에 미리 등록
+  - StringToEnum<T>(string name) : string을 Enum으로 바꾸기
+  - ParticleStart(GameObject particle) : 파티클 동작하기
+  - ParticleStop(GameObject particle) : 파티클 멈추기
+  - FindChild(GameObject go, string name = null, bool recursive = false) : 자식에 해당 name이 존재하는지 여부 체크
+- Define.cs : 미리 정의해 놓는 여러가지 상수
+- Extension.cs :
+  - GetOrAddComponent<T>(this GameObject go) : 일단 GetComponent 없으면 AddComponent
+  - BindEvent(this GameObject go) : Image 에 이벤트 달기
+  - Shuffle<T>(this IList list, int seed = -1) : 리스트 내 값들 섞기
+  - UnitSplit(int num) : 숫자를 천단위마다 ','로 나눔
+  - SetTextUnit(string[] unit) : 돈 단위 변환  
+  - TryParseInt(string value) : string to int/float 변환
+  - Sum(this IEnumerable<int/float/double> array) : 배열의 합
+  - Average(this IEnumerable<int/float/double> array) : 배열의 평균값
+  - SetPositionX(this Transform tr, float x) : Transform의 X만 바꾸기
+  - SetAlpha(this Graphic graphic, float alpha) : Color의 Alpha 만 바꾸기
+  - PlayAllParticle(this ParticleSystem particle) : 파티클 자식들까지 모두 실행
+  - StopAllParticle(this ParticleSystem particle) : 파티클 자식들까지 모두 정지 
