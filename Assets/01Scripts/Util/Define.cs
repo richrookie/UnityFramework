@@ -40,15 +40,25 @@ public class Define
         Click
     }
 
-    public enum CameraMode
+    public enum CameraMode : byte
     {
 
     }
 
-    public enum eSound
+    public enum eSound : byte
     {
         Bgm,
         Effect,
         MaxCount
+    }
+
+    public enum ObjectType : byte
+    {
+        NotAssigned,
+        GameObject,
+        TextMesh,
+        Image,
+        Button,
+        Text,
     }
 }
